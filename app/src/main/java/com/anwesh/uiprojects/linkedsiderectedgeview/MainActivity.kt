@@ -1,5 +1,7 @@
 package com.anwesh.uiprojects.linkedsiderectedgeview
 
+
+import android.content.pm.ActivityInfo
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
@@ -17,4 +19,5 @@ class MainActivity : AppCompatActivity() {
 fun MainActivity.fullScreen() {
     supportActionBar?.hide()
     window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 }
