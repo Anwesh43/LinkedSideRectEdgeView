@@ -20,6 +20,7 @@ val scGap : Float = 0.05f
 val scDiv : Double = 0.51
 val foreColor : Int = Color.parseColor("#673AB7")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val delay : Long = 20
 
 fun Int.inverse() : Float = 1f / this
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
@@ -31,11 +32,11 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
 }
 fun Float.updateValue(dir : Float,  a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
 
-fun Canvas.drawSideRectEdge(size : Float, sc : Float, paint : Paint) {
+fun Canvas.drawSideRectEdge(size : Float, sc : Float, sf : Float, paint : Paint) {
     save()
-    translate(-size, size)
-    drawLine(0f, 0f, 0f, -size / 2, paint)
-    rotate(180f * sc)
+    translate(-size, size / 2 * sf)
+    drawLine(0f, 0f, 0f, -(size / 2) * sf, paint)
+    rotate(180f * sc * sf)
     drawLine(0f, 0f, size, 0f, paint)
     restore()
 }
@@ -61,7 +62,9 @@ fun Canvas.drawSRENode(i : Int, scale : Float, paint : Paint) {
         val scj : Float = sc1.divideScale(j, parts)
         for (k in 0..(parts - 1)) {
             val sck : Float = scj.divideScale(k, parts)
-            drawSideRectEdge(size, sck, paint)
+            save()
+            drawSideRectEdge(size, sck, 1f - 2 * k, paint)
+            restore()
         }
         restore()
     }
@@ -112,7 +115,7 @@ class SideRectEdgeView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
