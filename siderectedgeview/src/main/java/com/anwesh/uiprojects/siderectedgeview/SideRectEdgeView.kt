@@ -29,4 +29,41 @@ fun Float.mirrorValue(a : Int, b : Int) : Float {
     val k : Float = scaleFactor()
     return (1 - k) * a.inverse() + k * b.inverse()
 }
-fun Float.updateValue(dir : Float,  a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap 
+fun Float.updateValue(dir : Float,  a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
+
+fun Canvas.drawSideRectEdge(size : Float, sc : Float, paint : Paint) {
+    save()
+    translate(-size, size)
+    drawLine(0f, 0f, 0f, -size / 2, paint)
+    rotate(180f * sc)
+    drawLine(0f, 0f, size, 0f, paint)
+    restore()
+}
+
+fun Canvas.drawSRENode(i : Int, scale : Float, paint : Paint) {
+    val sc1 : Float = scale.divideScale(0, 2)
+    val sc2 : Float = scale.divideScale(1, 2)
+    val w : Float = width.toFloat()
+    val h : Float = height.toFloat()
+    val gap : Float = h / (nodes + 1)
+    val size : Float = gap / sizeFactor
+    paint.strokeWidth = Math.min(w, h) / strokeFactor
+    paint.strokeCap = Paint.Cap.ROUND
+    paint.color = foreColor
+    val parts : Int = lines / 2
+    save()
+    translate(w / 2, gap * (i + 1))
+    for (j in 0..(parts - 1)) {
+        val sc2j : Float = sc2.divideScale(j, parts)
+        save()
+        scale(1f - 2 * (j %2), 1f)
+        translate(-(w / 2 - 2 * size) * sc2j, 0f)
+        val scj : Float = sc1.divideScale(j, parts)
+        for (k in 0..(parts - 1)) {
+            val sck : Float = scj.divideScale(k, parts)
+            drawSideRectEdge(size, sck, paint)
+        }
+        restore()
+    }
+    restore()
+}
