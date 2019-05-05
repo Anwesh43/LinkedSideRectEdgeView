@@ -200,4 +200,26 @@ class SideRectEdgeView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : SideRectEdgeView) {
+
+        private val sre : SideRectEdge = SideRectEdge(0)
+        private val animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            sre.draw(canvas, paint)
+            animator.animate {
+                sre.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            sre.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
